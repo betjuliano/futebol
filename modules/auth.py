@@ -2,7 +2,7 @@ import streamlit as st
 
 EMAILS_PERMITIDOS = {
     "admjulianoo@gmail.com",
-    "usuario2@email.com",
+    "riparg2000@gmail.com",
     "seu_email@exemplo.com"
 }
 
