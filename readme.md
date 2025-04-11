@@ -78,5 +78,9 @@ Usuários precisam digitar um email válido (pré-cadastrado) para acessar o das
 Desenvolvido por Juliano. Para sugestões ou melhorias, entre em contato!
 
 
-#git add . && git commit -m "Atualização geral" && git push origin main
+#git add .
+#git commit -m "atualização dos arquivos alterados"
+#git pull origin main --rebase
+#git push origin main
+
 
