@@ -13,7 +13,7 @@ if not usuario:
     st.stop()
 
 # Carrega dados da planilha
-df_original = carregar_dados("jogos1104.xlsx")
+df_original = carregar_dados("JogosDia.xlsx")
 
 # Aplica modelos e cálculos no dataframe
 df = aplicar_modelos(df_original)
