@@ -6,7 +6,7 @@ placares_btts = ['1x1', '2x1', '1x2', '2x2', '3x1', '1x3', '3x2', '2x3', '3x3']
 placares_comparacao = ['1x1', '2x1', '1x2', '2x2', '3x1', '1x3', '0x0', '1x0', '0x1', '2x0', '0x2']
 
 @st.cache_data
-def carregar_dados(filename="jogos1004.xlsx"):
+def carregar_dados(filename="jogos1104.xlsx"):
     df = pd.read_excel(filename, sheet_name="Planilha1")
     df.fillna(0, inplace=True)
     return df
