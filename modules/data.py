@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 
 placares_btts = ['1x1', '2x1', '1x2', '2x2', '3x1', '1x3', '3x2', '2x3', '3x3']
-placares_comparacao = ['1x1', '2x1', '1x2', '2x2', '3x1', '1x3', '0x0', '1x0', '0x1', '2x0', '0x2']
+placares_comparacao = ['0x0', '1x0', '0x1', '2x0', '0x2', '1X1', '2x1', '1x2', '3x0', '0x3', '2x2', '3x1', '1x3', '3x2', '2x3', '4x0', '0x4', '4x1', '1x4', '4x2', '2x4', '4x3', '3x4']
 
 @st.cache_data
 def carregar_dados(filename="JogosDia.xlsx"):
@@ -34,15 +34,15 @@ def aplicar_modelos(df):
                 return "Lay 1x0"
 
             # Novo modelo 0x1 com Pressão da Casa (Alta Gols)
-            maiores_placares = sorted([(row.get(p, 0), p) for p in placares_comparacao], reverse=True)[:4]
-            placares_top4 = [p for _, p in maiores_placares]
+            maiores_placares = sorted([(row.get(p, 0), p) for p in placares_comparacao], reverse=True)[:3]
+            placares_top3 = [p for _, p in maiores_placares]
             if (
                 row.get('XG CASA', 0) > row.get('XG VISITANTE', 0)
                 and row.get('XG TOTAL', 0) > 1.5
                 and (row.get('%PARTIDAS GOLS CASA HT', 0) > 0.6 and row.get('%PARTIDAS GOLS VISIT HT', 0) > 0.6)
-                and '0x0' not in placares_top4
-                and '1x1' not in placares_top4
-                and '0x1' not in placares_top4
+                and '0x0' not in placares_top3
+                and '0x1' not in placares_top3
+                and '0x2' not in placares_top3
             ):
                 return "Lay 0x1 com Pressão da Casa (Alta Gols)"
 
@@ -51,8 +51,9 @@ def aplicar_modelos(df):
                 row.get('XG VISITANTE', 0) > row.get('XG CASA', 0)
                 and row.get('XG TOTAL', 0) > 1.5
                 and (row.get('%PARTIDAS GOLS CASA HT', 0) > 0.6 and row.get('%PARTIDAS GOLS VISIT HT', 0) > 0.6)
-                and '0x0' not in placares_top4
-                and '1x0' not in placares_top4
+                and '0x0' not in placares_top3
+                and '1x0' not in placares_top3
+                and '1x1' not in placares_top3
             ):
                 return "Lay 1x0 com Pressão do Visitante (Alta Gols)"
 
