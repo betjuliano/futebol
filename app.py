@@ -2,9 +2,6 @@ import streamlit as st
 import sys
 import os
 
-print("Caminho atual:", os.getcwd())
-print("Caminho do sys.path:", sys.path)
-
 # Adiciona o caminho do diretório atual ao sys.path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
 
@@ -23,7 +20,14 @@ df_original = carregar_dados("JogosDia.xlsx")
 df = aplicar_modelos(df_original)
 df = calcular_indice_confiança(df)
 
+# Verifica os dados carregados
+st.write("Dados carregados:")
+st.dataframe(df)
+
 pagina = st.sidebar.radio("Escolha a página:", ["Dashboard de Jogos", "Gráficos e Análises"])
+
+# Verifica a página selecionada
+st.write(f"Página selecionada: {pagina}")
 
 if pagina == "Dashboard de Jogos":
     pagina_dashboard(df)

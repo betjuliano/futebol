@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 
 
 def pagina_dashboard(df):
-    # Código para renderizar o dashboard
-    pass
+    st.title("Dashboard de Jogos")
+    st.write("Aqui está o dashboard de jogos:")
+    st.dataframe(df)
 
 def pagina_graficos(df):
     # Código para renderizar os gráficos
