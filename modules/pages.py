@@ -46,7 +46,7 @@ def pagina_dashboard(df):
 
     # Exibe o DataFrame final
     df_final = df[colunas_existentes].copy()
-    #st.dataframe(df_final, use_container_width=True)
+    # st.dataframe(df_final, use_container_width=True)  # Ocultado no dashboard
 
 
 def pagina_graficos(df):
@@ -87,6 +87,6 @@ def pagina_graficos(df):
             df = df.sort_values('Horario_dt')
             df['Jogo'] = df['Casa'] + ' x ' + df['Visitante']
             df['Horário Formatado'] = df['Horario_dt'].dt.strftime('%d/%m %H:%M')
-            #st.dataframe(df[['Horário Formatado', 'Jogo', 'Modelo', 'Índice de Confiança']], use_container_width=True)
+            # st.dataframe(df[['Horário Formatado', 'Jogo', 'Modelo', 'Índice de Confiança']], use_container_width=True)  # Ocultado nos gráficos
         except Exception as e:
             st.warning(f"Erro ao processar a coluna Horario: {e}")
