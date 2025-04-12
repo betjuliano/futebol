@@ -25,7 +25,7 @@ def pagina_dashboard(df):
 
     # Aplica o filtro por modelo
     if modelo != "Todos":
-        df_filtrado = df_filtrado[df_filtrado['Modelo'] == modelo]
+        df_filtrado = df_filtrado.loc[df_filtrado['Modelo'] == modelo]
 
     # Verifica se há dados após o filtro por modelo
     if df_filtrado.empty:
@@ -46,7 +46,7 @@ def pagina_dashboard(df):
 
     # Aplica o filtro TIP se selecionado
     if exibir_so_com_tip:
-        df_filtrado = df_filtrado[df_filtrado['TIP'].str.strip() != '']
+        df_filtrado = df_filtrado.loc[df_filtrado['TIP'].str.strip() != '']
 
     # Verifica se há dados após o filtro TIP
     if df_filtrado.empty:
@@ -58,7 +58,7 @@ def pagina_dashboard(df):
         campeonatos = ["Todos"] + sorted(df_filtrado['Campeonato'].dropna().unique())
         campeonato = st.selectbox("Filtrar por Campeonato:", campeonatos)
         if campeonato != "Todos":
-            df_filtrado = df_filtrado[df_filtrado['Campeonato'] == campeonato]
+            df_filtrado = df_filtrado.loc[df_filtrado['Campeonato'] == campeonato]
 
     # Verifica se há dados após o filtro por campeonato
     if df_filtrado.empty:
@@ -92,7 +92,7 @@ def pagina_dashboard(df):
     for col in colunas_percentuais:
         if col in df_filtrado.columns:
             try:
-                df_filtrado[col] = (df_filtrado[col].astype(float) * 100).round(1).astype(str) + '%'
+                df_filtrado.loc[:, col] = (df_filtrado[col].astype(float) * 100).round(1).astype(str) + '%'
             except Exception as e:
                 st.warning(f"Erro ao formatar a coluna {col}: {e}")
 
