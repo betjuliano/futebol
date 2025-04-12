@@ -2,9 +2,7 @@ import streamlit as st
 import sys
 import os
 
-# Desativar a atualização automática do git
-os.environ['GIT_TERMINAL_PROMPT'] = '0'
-
+# Adicionando o diretório atual ao sys.path
 # Limpar e configurar corretamente o path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 modules_path = os.path.join(current_dir, 'modules')
