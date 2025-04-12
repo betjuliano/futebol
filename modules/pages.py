@@ -31,7 +31,7 @@ def pagina_dashboard(df):
 
     # Define as colunas a exibir
     colunas_exibir = [
-        'Horario', 'Casa', 'Visitante', 'ODD1', 'ODD2', 'ODD3', 'TIP', 'N DE PARTIDAS',
+        'Horario', 'Campeonato', 'Casa', 'Visitante', 'ODD1', 'ODD2', 'ODD3', 'TIP', 'N DE PARTIDAS',
         '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT',
         'XG CASA', 'CV CASA', 'XG VISITANTE', 'CV VISITANTE', 'XGTOTAL', 'CV TOTAL',
         '0x0', '0x1', '1x0', 'PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE', 'Índice de Confiança', 'Modelo'
