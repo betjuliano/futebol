@@ -3,10 +3,17 @@ import sys
 import os
 
 print("Caminho atual:", os.getcwd())
+
+# Limpar sys.path e adicionar apenas uma vez o diretório de módulos
+sys.path = [p for p in sys.path if p != 'modules']
+modules_path = os.path.join(os.path.dirname(__file__), 'modules')
+if modules_path not in sys.path:
+    sys.path.append(modules_path)
+
 print("Caminho do sys.path:", sys.path)
 
-# Adiciona o caminho do diretório atual ao sys.path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
+# Desativar a atualização automática do git
+os.environ['GIT_TERMINAL_PROMPT'] = '0'
 
 from auth import autenticar_usuario
 from data import carregar_dados, aplicar_modelos, calcular_indice_confiança
@@ -23,14 +30,7 @@ df_original = carregar_dados("JogosDia.xlsx")
 df = aplicar_modelos(df_original)
 df = calcular_indice_confiança(df)
 
-# Verifica os dados carregados
-#st.write("Dados carregados:")
-#st.dataframe(df)
-
 pagina = st.sidebar.radio("Escolha a página:", ["Dashboard de Jogos", "Gráficos e Análises"])
-
-# Verifica a página selecionada
-st.write(f"Página selecionada: {pagina}")
 
 if pagina == "Dashboard de Jogos":
     pagina_dashboard(df)
