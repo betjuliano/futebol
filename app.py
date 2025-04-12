@@ -24,8 +24,8 @@ df = aplicar_modelos(df_original)
 df = calcular_indice_confiança(df)
 
 # Verifica os dados carregados
-st.write("Dados carregados:")
-st.dataframe(df)
+#st.write("Dados carregados:")
+#st.dataframe(df)
 
 pagina = st.sidebar.radio("Escolha a página:", ["Dashboard de Jogos", "Gráficos e Análises"])
 
