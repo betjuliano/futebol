@@ -24,7 +24,7 @@ def pagina_dashboard(df):
                 (row.get('0x0', 1.0), '0-0'),
                 (row.get('1x0', 1.0), '1-0'),
                 (row.get('0x1', 1.0), '0-1'),
-            ] if prob < 4
+            ] if prob < .4
         ]), axis=1)
     else:
         st.warning("Colunas necessárias para calcular 'TIP' estão ausentes.")
