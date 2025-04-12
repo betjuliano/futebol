@@ -10,22 +10,24 @@ def pagina_dashboard(df):
         st.error("A coluna 'Modelo' não foi encontrada no DataFrame.")
         return
 
+    # Cria uma cópia do DataFrame para evitar SettingWithCopyWarning
+    df_trabalho = df.copy()
+
     # Padroniza a coluna 'Modelo'
-    df['Modelo'] = df['Modelo'].astype(str).str.strip()
+    df_trabalho.loc[:, 'Modelo'] = df_trabalho['Modelo'].astype(str).str.strip()
 
     # Filtro por modelo
-    modelos = ["Todos"] + sorted(df['Modelo'].dropna().unique())
+    modelos = ["Todos"] + sorted(df_trabalho['Modelo'].dropna().unique())
     modelo = st.selectbox("Filtrar por Modelo:", modelos)
 
     # Filtro por TIP
     exibir_so_com_tip = st.checkbox("Exibir apenas jogos com TIP", value=False)
 
-    # Cria uma cópia do DataFrame para aplicar os filtros
-    df_filtrado = df.copy()
-
     # Aplica o filtro por modelo
     if modelo != "Todos":
-        df_filtrado = df_filtrado.loc[df_filtrado['Modelo'] == modelo]
+        df_filtrado = df_trabalho.loc[df_trabalho['Modelo'] == modelo].copy()
+    else:
+        df_filtrado = df_trabalho.copy()
 
     # Verifica se há dados após o filtro por modelo
     if df_filtrado.empty:
@@ -34,7 +36,7 @@ def pagina_dashboard(df):
 
     # Adiciona a coluna 'TIP' se possível
     if all(col in df_filtrado.columns for col in ['0x0', '1x0', '0x1']):
-        df_filtrado['TIP'] = df_filtrado.apply(lambda row: ', '.join([
+        df_filtrado.loc[:, 'TIP'] = df_filtrado.apply(lambda row: ', '.join([
             tip for prob, tip in [
                 (row.get('0x0', 1.0), '0-0'),
                 (row.get('1x0', 1.0), '1-0'),
@@ -46,7 +48,7 @@ def pagina_dashboard(df):
 
     # Aplica o filtro TIP se selecionado
     if exibir_so_com_tip:
-        df_filtrado = df_filtrado.loc[df_filtrado['TIP'].str.strip() != '']
+        df_filtrado = df_filtrado.loc[df_filtrado['TIP'].str.strip() != ''].copy()
 
     # Verifica se há dados após o filtro TIP
     if df_filtrado.empty:
@@ -58,7 +60,7 @@ def pagina_dashboard(df):
         campeonatos = ["Todos"] + sorted(df_filtrado['Campeonato'].dropna().unique())
         campeonato = st.selectbox("Filtrar por Campeonato:", campeonatos)
         if campeonato != "Todos":
-            df_filtrado = df_filtrado.loc[df_filtrado['Campeonato'] == campeonato]
+            df_filtrado = df_filtrado.loc[df_filtrado['Campeonato'] == campeonato].copy()
 
     # Verifica se há dados após o filtro por campeonato
     if df_filtrado.empty:
@@ -89,29 +91,36 @@ def pagina_dashboard(df):
         '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT',
         '0x0', '0x1', '1x0'
     ]
+
+    # Cria uma cópia para formatação
+    df_formatado = df_filtrado.copy()
+
     for col in colunas_percentuais:
-        if col in df_filtrado.columns:
+        if col in df_formatado.columns:
             try:
-                df_filtrado.loc[:, col] = (df_filtrado[col].astype(float) * 100).round(1).astype(str) + '%'
+                df_formatado.loc[:, col] = (df_formatado[col].astype(float) * 100).round(1).astype(str) + '%'
             except Exception as e:
                 st.warning(f"Erro ao formatar a coluna {col}: {e}")
 
     # Exibe os dados finais no dashboard
-    df_final = df_filtrado[colunas_existentes].copy()
+    df_final = df_formatado[colunas_existentes].copy()
     st.dataframe(df_final, use_container_width=True)
 
 
 def pagina_graficos(df):
     st.header("Gráficos de Análise de Jogos")
 
+    # Cria uma cópia do DataFrame para evitar SettingWithCopyWarning
+    df_trabalho = df.copy()
+
     # Verifica se a coluna 'Modelo' existe
-    if 'Modelo' not in df.columns:
+    if 'Modelo' not in df_trabalho.columns:
         st.error("A coluna 'Modelo' não foi encontrada no DataFrame.")
         return
 
     # Frequência de Modelos
     st.subheader("Frequência de Modelos")
-    modelo_counts = df['Modelo'].value_counts()
+    modelo_counts = df_trabalho['Modelo'].value_counts()
     fig1, ax1 = plt.subplots()
     cores = {
         "Lay Visitante": "#66bb6a",
@@ -132,13 +141,15 @@ def pagina_graficos(df):
 
     # Linha do Tempo dos Jogos
     st.subheader("Linha do Tempo dos Jogos")
-    if 'Horario' in df.columns:
+    if 'Horario' in df_trabalho.columns:
         try:
-            df['Horario_dt'] = pd.to_datetime(df['Horario'], errors='coerce')
-            df = df.dropna(subset=['Horario_dt'])
-            df = df.sort_values('Horario_dt')
-            df['Jogo'] = df['Casa'] + ' x ' + df['Visitante']
-            df['Horário Formatado'] = df['Horario_dt'].dt.strftime('%d/%m %H:%M')
-            st.dataframe(df[['Horário Formatado', 'Jogo', 'Modelo', 'Índice de Confiança']], use_container_width=True)
+            # Cria uma cópia para manipulação
+            df_timeline = df_trabalho.copy()
+            df_timeline.loc[:, 'Horario_dt'] = pd.to_datetime(df_timeline['Horario'], errors='coerce')
+            df_timeline = df_timeline.dropna(subset=['Horario_dt'])
+            df_timeline = df_timeline.sort_values('Horario_dt')
+            df_timeline.loc[:, 'Jogo'] = df_timeline['Casa'] + ' x ' + df_timeline['Visitante']
+            df_timeline.loc[:, 'Horário Formatado'] = df_timeline['Horario_dt'].dt.strftime('%d/%m %H:%M')
+            st.dataframe(df_timeline[['Horário Formatado', 'Jogo', 'Modelo', 'Índice de Confiança']], use_container_width=True)
         except Exception as e:
             st.warning(f"Erro ao processar a coluna Horario: {e}")
