@@ -27,6 +27,6 @@ pagina = st.sidebar.radio("Escolha a página:", ["Dashboard de Jogos", "Gráfico
 
 # Renderiza a página selecionada
 if pagina == "Dashboard de Jogos":
-    pages.pagina_dashboard(df)
+    pagina_dashboard(df)  # Chamada direta
 elif pagina == "Gráficos e Análises":
-    pages.pagina_graficos(df)
+    pagina_graficos(df)  # Chamada direta
