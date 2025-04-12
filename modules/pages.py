@@ -33,8 +33,8 @@ def pagina_dashboard(df):
     colunas_exibir = [
         'Horario', 'Campeonato', 'Casa', 'Visitante', 'PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE','ODD1', 'ODD2', 'ODD3', 'TIP', 'N DE PARTIDAS',
         '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT',
-        'XG CASA', 'CV CASA', 'XG VISITANTE', 'CV VISITANTE', 'XGTOTAL', 'CV TOTAL',
-        '0x0', '0x1', '1x0', 'Índice de Confiança', 'Modelo'
+        'XG CASA', 'CV CASA', 'XG VISITANTE', 'CV VISITANTE', 'XG TOTAL', 'CV TOTAL',
+        '0x0', '0x1', '1x0', 'PROJEÇÃO VIT CASA', 'PROJEÇÃO VIT VISITANTE', 'PROJEÇÃO GOL CASA FEITO', 'PROJEÇÃO GOL VISITANTE FEITO', 'Índice de Confiança', 'Modelo'
     ]
     colunas_existentes = [col for col in colunas_exibir if col in df.columns]
 
