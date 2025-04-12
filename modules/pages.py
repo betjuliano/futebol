@@ -46,7 +46,7 @@ def pagina_dashboard(df):
 
     # Exibe o DataFrame final
     df_final = df[colunas_existentes].copy()
-    st.dataframe(df_final, use_container_width=True)
+    #st.dataframe(df_final, use_container_width=True)
 
 
 def pagina_graficos(df):
