@@ -5,24 +5,29 @@ import matplotlib.pyplot as plt
 def pagina_dashboard(df):
     st.header("Dashboard de Jogos por Modelo")
 
-    # Verifica e padroniza a coluna 'Modelo'
+    # Verifica se a coluna 'Modelo' existe
     if 'Modelo' not in df.columns:
         st.error("A coluna 'Modelo' não foi encontrada no DataFrame.")
         return
 
+    # Padroniza a coluna 'Modelo'
     df['Modelo'] = df['Modelo'].astype(str).str.strip()
 
     # Filtro por modelo
     modelos = ["Todos"] + sorted(df['Modelo'].dropna().unique())
     modelo = st.selectbox("Filtrar por Modelo:", modelos)
 
-    # Novo: filtro por TIP
+    # Filtro por TIP
     exibir_so_com_tip = st.checkbox("Exibir apenas jogos com TIP", value=False)
 
+    # Cria uma cópia do DataFrame para aplicar os filtros
     df_filtrado = df.copy()
+
+    # Aplica o filtro por modelo
     if modelo != "Todos":
         df_filtrado = df_filtrado[df_filtrado['Modelo'] == modelo]
 
+    # Verifica se há dados após o filtro por modelo
     if df_filtrado.empty:
         st.warning("Nenhum jogo encontrado para esse modelo.")
         return
@@ -39,21 +44,28 @@ def pagina_dashboard(df):
     else:
         st.warning("Colunas necessárias para calcular 'TIP' estão ausentes.")
 
-    # Aplica filtro TIP se selecionado
+    # Aplica o filtro TIP se selecionado
     if exibir_so_com_tip:
         df_filtrado = df_filtrado[df_filtrado['TIP'].str.strip() != '']
 
-    # Verifica se após todos os filtros há algo a mostrar
+    # Verifica se há dados após o filtro TIP
     if df_filtrado.empty:
         st.warning("Nenhum jogo encontrado com os filtros aplicados.")
         return
-    # Filtro por campeonato
-    campeonatos = ["Todos"] + sorted(df_filtrado['Campeonato'].dropna().unique())
-    campeonato = st.selectbox("Filtrar por Campeonato:", campeonatos)
-    if campeonato != "Todos":
-        df_filtrado = df_filtrado[df_filtrado['Campeonato'] == campeonato]
 
-    # Define colunas a exibir
+    # Filtro por campeonato
+    if 'Campeonato' in df_filtrado.columns:
+        campeonatos = ["Todos"] + sorted(df_filtrado['Campeonato'].dropna().unique())
+        campeonato = st.selectbox("Filtrar por Campeonato:", campeonatos)
+        if campeonato != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['Campeonato'] == campeonato]
+
+    # Verifica se há dados após o filtro por campeonato
+    if df_filtrado.empty:
+        st.warning("Nenhum jogo encontrado com os filtros aplicados.")
+        return
+
+    # Define as colunas a exibir
     colunas_exibir = [
         'Horario', 'Campeonato', 'Casa', 'Visitante',
         'PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE', 'ODD1', 'ODD2', 'ODD3',
@@ -84,7 +96,7 @@ def pagina_dashboard(df):
             except Exception as e:
                 st.warning(f"Erro ao formatar a coluna {col}: {e}")
 
-    # Exibe os dados finais
+    # Exibe os dados finais no dashboard
     df_final = df_filtrado[colunas_existentes].copy()
     st.dataframe(df_final, use_container_width=True)
 
