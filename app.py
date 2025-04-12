@@ -1,6 +1,10 @@
 # app.py - Arquivo principal do Streamlit
 
 import streamlit as st
+import sys
+import os
+print("Caminho atual:", os.getcwd())
+print("Caminho do sys.path:", sys.path)
 from modules.auth import autenticar_usuario
 from modules.data import carregar_dados, aplicar_modelos, calcular_indice_confiança
 from modules import pages  # Importa o módulo pages.py como pacote

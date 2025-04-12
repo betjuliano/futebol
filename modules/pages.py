@@ -35,7 +35,7 @@ def pagina_dashboard(df):
     df_final = df[colunas_existentes].copy()
 
     st.dataframe(df_final, use_container_width=True)
-
+    pass
 
 def pagina_graficos(df):
     st.header("Gráficos e Linha do Tempo")
@@ -71,3 +71,4 @@ def pagina_graficos(df):
             st.dataframe(df[['Horário Formatado', 'Jogo', 'Modelo', 'Índice de Confiança']], use_container_width=True)
         except:
             st.warning("Erro ao processar a coluna Horario.")
+    pass
