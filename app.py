@@ -2,7 +2,7 @@
 import streamlit as st
 from modules.auth import autenticar_usuario
 from modules.data import carregar_dados, aplicar_modelos, calcular_indice_confiança
-from modules import pages  # <-- você importa o módulo inteiro
+from modules.pages import pagina_dashboard, pagina_graficos
 
 # Configuração da página
 st.set_page_config(page_title="Dashboard Futebol PRO", layout="wide")
