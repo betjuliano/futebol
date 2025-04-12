@@ -17,9 +17,21 @@ def pagina_dashboard(df):
     # Converter a coluna Horario para datetime se existir
     if 'Horario' in df.columns:
         try:
-            df['Horario_dt'] = pd.to_datetime(df['Horario'], errors='coerce')
+            # Primeiro, verificar o formato da coluna Horario
+            amostra_horario = df['Horario'].iloc[0] if not df.empty else ""
+            st.write(f"Formato da coluna Horario: {amostra_horario}")
+
+            # Tentar converter para datetime com diferentes formatos
+            try:
+                df['Horario_dt'] = pd.to_datetime(df['Horario'], format='%d/%m/%Y %H:%M', errors='coerce')
+            except:
+                try:
+                    df['Horario_dt'] = pd.to_datetime(df['Horario'], errors='coerce')
+                except Exception as e:
+                    st.warning(f"Erro ao converter horários: {e}")
+                    df['Horario_dt'] = pd.NaT
         except Exception as e:
-            st.warning(f"Erro ao converter horários: {e}")
+            st.warning(f"Erro ao processar a coluna Horario: {e}")
             df['Horario_dt'] = pd.NaT
 
     # Filtro por modelo
@@ -41,7 +53,17 @@ def pagina_dashboard(df):
     if 'Horario_dt' in df_filtrado.columns:
         # Obter horário atual
         agora = pd.Timestamp.now()
-        
+
+        # Mostrar o horário atual para debug
+        st.write(f"Horário atual: {agora.strftime('%d/%m/%Y %H:%M')}")
+
+        # Mostrar alguns exemplos de horários do DataFrame para debug
+        if not df_filtrado.empty:
+            st.write("Exemplos de horários no DataFrame:")
+            for i, row in df_filtrado.head(3).iterrows():
+                if pd.notna(row.get('Horario_dt')):
+                    st.write(f"Horario original: {row.get('Horario', 'N/A')}, Horario_dt: {row.get('Horario_dt').strftime('%d/%m/%Y %H:%M')}")
+
         # Criar opções de filtro de horário
         opcoes_horario = [
             "Todos os horários",
@@ -51,47 +73,50 @@ def pagina_dashboard(df):
             "Hoje",
             "Amanhã"
         ]
-        
+
         filtro_horario = st.selectbox("Filtrar por Horário:", opcoes_horario)
-        
+
         if filtro_horario != "Todos os horários":
+            # Remover linhas com horário inválido
+            df_filtrado = df_filtrado.dropna(subset=['Horario_dt']).copy()
+
             if filtro_horario == "Próximas 2 horas":
                 # Jogos nas próximas 2 horas
                 inicio = agora
                 fim = agora + pd.Timedelta(hours=2)
-                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= inicio) & 
+                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= inicio) &
                                          (df_filtrado['Horario_dt'] <= fim)].copy()
-                st.info(f"Mostrando jogos entre {inicio.strftime('%H:%M')} e {fim.strftime('%H:%M')} de hoje")
-                
+                st.info(f"Mostrando jogos entre {inicio.strftime('%d/%m/%Y %H:%M')} e {fim.strftime('%d/%m/%Y %H:%M')}")
+
             elif filtro_horario == "Últimas 2 horas":
                 # Jogos nas últimas 2 horas
                 inicio = agora - pd.Timedelta(hours=2)
                 fim = agora
-                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= inicio) & 
+                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= inicio) &
                                          (df_filtrado['Horario_dt'] <= fim)].copy()
-                st.info(f"Mostrando jogos entre {inicio.strftime('%H:%M')} e {fim.strftime('%H:%M')} de hoje")
-                
+                st.info(f"Mostrando jogos entre {inicio.strftime('%d/%m/%Y %H:%M')} e {fim.strftime('%d/%m/%Y %H:%M')}")
+
             elif filtro_horario == "Últimas 2h e próximas 2h":
                 # Jogos nas últimas 2 horas e próximas 2 horas
                 inicio = agora - pd.Timedelta(hours=2)
                 fim = agora + pd.Timedelta(hours=2)
-                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= inicio) & 
+                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= inicio) &
                                          (df_filtrado['Horario_dt'] <= fim)].copy()
-                st.info(f"Mostrando jogos entre {inicio.strftime('%H:%M')} e {fim.strftime('%H:%M')}")
-                
+                st.info(f"Mostrando jogos entre {inicio.strftime('%d/%m/%Y %H:%M')} e {fim.strftime('%d/%m/%Y %H:%M')}")
+
             elif filtro_horario == "Hoje":
                 # Jogos de hoje
                 hoje_inicio = pd.Timestamp(agora.date())
                 hoje_fim = hoje_inicio + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
-                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= hoje_inicio) & 
+                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= hoje_inicio) &
                                          (df_filtrado['Horario_dt'] <= hoje_fim)].copy()
                 st.info(f"Mostrando jogos de hoje ({hoje_inicio.strftime('%d/%m/%Y')})")
-                
+
             elif filtro_horario == "Amanhã":
                 # Jogos de amanhã
                 amanha_inicio = pd.Timestamp(agora.date()) + pd.Timedelta(days=1)
                 amanha_fim = amanha_inicio + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
-                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= amanha_inicio) & 
+                df_filtrado = df_filtrado[(df_filtrado['Horario_dt'] >= amanha_inicio) &
                                          (df_filtrado['Horario_dt'] <= amanha_fim)].copy()
                 st.info(f"Mostrando jogos de amanhã ({amanha_inicio.strftime('%d/%m/%Y')})")
 
