@@ -1,4 +1,7 @@
 # app.py - Arquivo principal do Streamlit
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import streamlit as st
 from modules.auth import autenticar_usuario
 from modules.data import carregar_dados, aplicar_modelos, calcular_indice_confiança
