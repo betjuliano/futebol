@@ -11,8 +11,16 @@ def pagina_dashboard(df):
     if modelo != "Todos":
         df = df[df['Modelo'] == modelo]
 
+    df['TIP'] = df.apply(lambda row: ', '.join([
+        tip for prob, tip in [
+            (row.get('0x0', 1.0), '0-0'),
+            (row.get('1x0', 1.0), '1-0'),
+            (row.get('0x1', 1.0), '0-1'),
+        ] if prob < 0.4
+    ]), axis=1)
+
     colunas_exibir = [
-        'Horario', 'Casa', 'Visitante', 'ODD1', 'ODD2', 'ODD3', 'N DE PARTIDAS',
+        'Horario', 'Casa', 'Visitante', 'ODD1', 'ODD2', 'ODD3', 'TIP', 'N DE PARTIDAS',
         '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT',
         'XG CASA', 'XG VISITANTE', 'XGSCORE CASA', 'XGSCORE VISITANTE',
         '0x0', '0x1', '1x0', 'Índice de Confiança', 'Modelo'
