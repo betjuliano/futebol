@@ -2,24 +2,34 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 def pagina_dashboard(df):
     st.header("Dashboard de Jogos por Modelo")
 
-    # Verifica se a coluna 'Modelo' existe
+    # Verifica e padroniza a coluna 'Modelo'
     if 'Modelo' not in df.columns:
         st.error("A coluna 'Modelo' não foi encontrada no DataFrame.")
         return
 
-    # Filtro por modelo
-    modelos = ["Todos"] + sorted(df['Modelo'].unique())
-    modelo = st.selectbox("Filtrar por Modelo:", modelos)
-    if modelo != "Todos":
-        df = df[df['Modelo'] == modelo]
+    df['Modelo'] = df['Modelo'].astype(str).str.strip()
 
-    # Adiciona a coluna 'TIP'
-    if all(col in df.columns for col in ['0x0', '1x0', '0x1']):
-        df['TIP'] = df.apply(lambda row: ', '.join([
+    # Filtro por modelo
+    modelos = ["Todos"] + sorted(df['Modelo'].dropna().unique())
+    modelo = st.selectbox("Filtrar por Modelo:", modelos)
+
+    # Novo: filtro por TIP
+    exibir_so_com_tip = st.checkbox("Exibir apenas jogos com TIP", value=False)
+
+    df_filtrado = df.copy()
+    if modelo != "Todos":
+        df_filtrado = df_filtrado[df_filtrado['Modelo'] == modelo]
+
+    if df_filtrado.empty:
+        st.warning("Nenhum jogo encontrado para esse modelo.")
+        return
+
+    # Adiciona a coluna 'TIP' se possível
+    if all(col in df_filtrado.columns for col in ['0x0', '1x0', '0x1']):
+        df_filtrado['TIP'] = df_filtrado.apply(lambda row: ', '.join([
             tip for prob, tip in [
                 (row.get('0x0', 1.0), '0-0'),
                 (row.get('1x0', 1.0), '1-0'),
@@ -29,24 +39,55 @@ def pagina_dashboard(df):
     else:
         st.warning("Colunas necessárias para calcular 'TIP' estão ausentes.")
 
-    # Define as colunas a exibir
+    # Aplica filtro TIP se selecionado
+    if exibir_so_com_tip:
+        df_filtrado = df_filtrado[df_filtrado['TIP'].str.strip() != '']
+
+    # Verifica se após todos os filtros há algo a mostrar
+    if df_filtrado.empty:
+        st.warning("Nenhum jogo encontrado com os filtros aplicados.")
+        return
+    # Filtro por campeonato
+    campeonatos = ["Todos"] + sorted(df_filtrado['Campeonato'].dropna().unique())
+    campeonato = st.selectbox("Filtrar por Campeonato:", campeonatos)
+    if campeonato != "Todos":
+        df_filtrado = df_filtrado[df_filtrado['Campeonato'] == campeonato]
+
+    # Define colunas a exibir
     colunas_exibir = [
-        'Horario', 'Campeonato', 'Casa', 'Visitante', 'PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE', 'ODD1', 'ODD2', 'ODD3', 'TIP', 'N DE PARTIDAS',
+        'Horario', 'Campeonato', 'Casa', 'Visitante',
+        'PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE', 'ODD1', 'ODD2', 'ODD3',
+        'TIP', 'N DE PARTIDAS',
         '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT',
-        'XG CASA', 'CV CASA', 'XG VISITANTE', 'CV VISITANTE', 'XG TOTAL', 'CV TOTAL',
-        '0x0', '0x1', '1x0', 'PROJEÇÃO VIT CASA', 'PROJEÇÃO VIT VISITANTE', 'PROJEÇÃO GOL CASA FEITO', 'PROJEÇÃO GOL VISITANTE FEITO', 'Índice de Confiança', 'Modelo'
+        'XG CASA', 'CV CASA', 'XG VISITANTE', 'CV VISITANTE',
+        'XG TOTAL', 'CV TOTAL',
+        '0x0', '0x1', '1x0',
+        'PROJEÇÃO VIT CASA', 'PROJEÇÃO VIT VISITANTE',
+        'PROJEÇÃO GOL CASA FEITO', 'PROJEÇÃO GOL VISITANTE FEITO',
+        'Índice de Confiança', 'Modelo'
     ]
-    colunas_existentes = [col for col in colunas_exibir if col in df.columns]
 
-    # Converte colunas de percentuais
-    percentuais = ['PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE', 'PROJEÇÃO VIT CASA', 'PROJEÇÃO VIT VISITANTE', 'PROJEÇÃO GOL CASA FEITO', 'PROJEÇÃO GOL VISITANTE FEITO', '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT', '0x0', '0x1', '1x0']
-    for col in percentuais:
-        if col in df.columns:
-            df[col] = (df[col] * 100).round(1).astype(str) + '%'
+    colunas_existentes = [col for col in colunas_exibir if col in df_filtrado.columns]
 
-    # Exibe o DataFrame final no dashboard
-    df_final = df[colunas_existentes].copy()
+    # Converte colunas percentuais para string com símbolo %
+    colunas_percentuais = [
+        'PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE',
+        'PROJEÇÃO VIT CASA', 'PROJEÇÃO VIT VISITANTE',
+        'PROJEÇÃO GOL CASA FEITO', 'PROJEÇÃO GOL VISITANTE FEITO',
+        '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT',
+        '0x0', '0x1', '1x0'
+    ]
+    for col in colunas_percentuais:
+        if col in df_filtrado.columns:
+            try:
+                df_filtrado[col] = (df_filtrado[col].astype(float) * 100).round(1).astype(str) + '%'
+            except Exception as e:
+                st.warning(f"Erro ao formatar a coluna {col}: {e}")
+
+    # Exibe os dados finais
+    df_final = df_filtrado[colunas_existentes].copy()
     st.dataframe(df_final, use_container_width=True)
+
 
 def pagina_graficos(df):
     st.header("Gráficos de Análise de Jogos")
