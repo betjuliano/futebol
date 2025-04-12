@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 
 def pagina_dashboard(df):
     st.header("Dashboard de Jogos por Modelo")
-
+    st.write(df)
+    st.subheader("Tabela de Jogos")
     # Verifica se a coluna 'Modelo' existe
     if 'Modelo' not in df.columns:
         st.error("A coluna 'Modelo' não foi encontrada no DataFrame.")
@@ -52,7 +53,9 @@ def pagina_dashboard(df):
 
 def pagina_graficos(df):
     st.header("Gráficos de Análise de Jogos")
-
+    st.line_chart(df)
+    st.subheader("Distribuição de Modelos")
+    
     # Verifica se a coluna 'Modelo' existet.subheader("Distribuição de Modelos")
     if 'Modelo' not in df.columns:
         st.error("A coluna 'Modelo' não foi encontrada no DataFrame.")

@@ -2,6 +2,9 @@ import streamlit as st
 import sys
 import os
 
+print("Caminho atual:", os.getcwd())
+print("Caminho do sys.path:", sys.path)
+
 # Adiciona o caminho do diretório atual ao sys.path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
 
