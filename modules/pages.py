@@ -39,7 +39,7 @@ def pagina_dashboard(df):
     colunas_existentes = [col for col in colunas_exibir if col in df.columns]
 
     # Converte colunas de percentuais
-    percentuais = ['PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE', '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT', '0x0', '0x1', '1x0']
+    percentuais = ['PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE', 'PROJEÇÃO VIT CASA', 'PROJEÇÃO VIT VISITANTE', 'PROJEÇÃO GOL CASA FEITO', 'PROJEÇÃO GOL VISITANTE FEITO', '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT', '0x0', '0x1', '1x0']
     for col in percentuais:
         if col in df.columns:
             df[col] = (df[col] * 100).round(1).astype(str) + '%'
