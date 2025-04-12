@@ -13,6 +13,36 @@ def pagina_dashboard(df):
     # Padroniza a coluna 'Modelo'
     df = df.copy()  # Criar uma cópia completa do DataFrame
     df['Modelo'] = df['Modelo'].astype(str).str.strip()
+    
+    # Converter a coluna Horario para datetime se existir
+    if 'Horario' in df.columns:
+        try:
+            df['Horario_dt'] = pd.to_datetime(df['Horario'], errors='coerce')
+        except Exception as e:
+            st.warning(f"Erro ao converter horários: {e}")
+            df['Horario_dt'] = pd.NaT
+
+    # Filtro por horário (últimas 2h e próximas 2h)
+    if 'Horario_dt' in df.columns:
+        filtrar_por_horario = st.checkbox("Mostrar apenas jogos das últimas 2h e próximas 2h", value=False)
+        
+        if filtrar_por_horario:
+            # Obter horário atual
+            agora = pd.Timestamp.now()
+            duas_horas_atras = agora - pd.Timedelta(hours=2)
+            duas_horas_depois = agora + pd.Timedelta(hours=2)
+            
+            # Aplicar filtro de horário
+            df = df[(df['Horario_dt'] >= duas_horas_atras) & 
+                    (df['Horario_dt'] <= duas_horas_depois)].copy()
+            
+            # Mostrar intervalo de horário considerado
+            st.info(f"Mostrando jogos entre {duas_horas_atras.strftime('%H:%M')} e {duas_horas_depois.strftime('%H:%M')} (horário atual: {agora.strftime('%H:%M')})")
+            
+            # Verificar se há jogos nesse intervalo
+            if df.empty:
+                st.warning("Nenhum jogo encontrado nesse intervalo de horário.")
+                return
 
     # Filtro por modelo
     modelos = ["Todos"] + sorted(df['Modelo'].dropna().unique())
@@ -81,7 +111,6 @@ def pagina_dashboard(df):
 
     colunas_existentes = [col for col in colunas_exibir if col in df_filtrado.columns]
 
-    # CORREÇÃO LINHA 22: Definir corretamente as colunas percentuais
     # Converte colunas percentuais para string com símbolo %
     colunas_percentuais = [
         'PROJEÇÃO PTS CASA', 'PROJEÇÃO PTS VISITANTE',
@@ -117,12 +146,42 @@ def pagina_graficos(df):
         st.error("A coluna 'Modelo' não foi encontrada no DataFrame.")
         return
 
+    # Converter a coluna Horario para datetime se existir
+    if 'Horario' in df.columns:
+        try:
+            df['Horario_dt'] = pd.to_datetime(df['Horario'], errors='coerce')
+        except Exception as e:
+            st.warning(f"Erro ao converter horários: {e}")
+            df['Horario_dt'] = pd.NaT
+
+    # Filtro por horário (últimas 2h e próximas 2h)
+    if 'Horario_dt' in df.columns:
+        filtrar_por_horario = st.checkbox("Mostrar apenas jogos das últimas 2h e próximas 2h", value=False)
+
+        if filtrar_por_horario:
+            # Obter horário atual
+            agora = pd.Timestamp.now()
+            duas_horas_atras = agora - pd.Timedelta(hours=2)
+            duas_horas_depois = agora + pd.Timedelta(hours=2)
+
+            # Aplicar filtro de horário
+            df = df[(df['Horario_dt'] >= duas_horas_atras) &
+                    (df['Horario_dt'] <= duas_horas_depois)].copy()
+
+            # Mostrar intervalo de horário considerado
+            st.info(f"Mostrando jogos entre {duas_horas_atras.strftime('%H:%M')} e {duas_horas_depois.strftime('%H:%M')} (horário atual: {agora.strftime('%H:%M')})")
+
+            # Verificar se há jogos nesse intervalo
+            if df.empty:
+                st.warning("Nenhum jogo encontrado nesse intervalo de horário.")
+                return
+
     # Frequência de Modelos
     st.subheader("Frequência de Modelos")
     modelo_counts = df['Modelo'].value_counts()
     fig1, ax1 = plt.subplots()
 
-    # CORREÇÃO LINHA 45: Definir o dicionário de cores corretamente
+    # Definir o dicionário de cores corretamente
     cores = {
         "Lay Visitante": "#66bb6a",
         "Lay Casa": "#ef5350",
