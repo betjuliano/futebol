@@ -45,8 +45,8 @@ def pagina_dashboard(df):
             df[col] = (df[col] * 100).round(1).astype(str) + '%'
 
     # Exibe o DataFrame final
-    df_final = df[colunas_existentes].copy()
-    st.dataframe(df_final, use_container_width=True)
+    #df_final = df[colunas_existentes].copy()
+    #st.dataframe(df_final, use_container_width=True)
 
 
 def pagina_graficos(df):
