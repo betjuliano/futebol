@@ -11,7 +11,7 @@ def pagina_dashboard(df):
         return
 
     # Padroniza a coluna 'Modelo'
-    df = df.copy()  # Criar uma cópia completa do DataFrame
+    df = df.copy()
     df['Modelo'] = df['Modelo'].astype(str).str.strip()
 
     # Converter a coluna Horario para datetime se existir

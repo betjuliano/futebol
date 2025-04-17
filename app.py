@@ -39,10 +39,7 @@ if not usuario:
 
 # Carregar dados
 try:
-    df_original = carregar_dados()  # Carregar dados do Google Sheets
-    if df_original.empty:
-        st.error("Nenhum dado foi carregado. Verifique o arquivo.")
-        st.stop()
+    df_original = carregar_dados()
     df = aplicar_modelos(df_original)
     df = calcular_indice_confiança(df)
 except Exception as e:
