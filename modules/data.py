@@ -4,19 +4,6 @@ import io
 from openpyxl import load_workbook
 import streamlit as st  # Certifique-se de que esta linha está presente
 
-def listar_arquivos_drive(folder_id):
-    # URL da API do Google Drive para listar arquivos
-    url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}' in parents&key=AIzaSyBowt-JKmhwHOT7fUBi9ILKh_XR6_xKUCw"
-    response = requests.get(url)
-
-    # Verificar a resposta da API
-    if response.status_code == 200:
-        files = response.json().get('files', [])
-        return {file['name']: file['id'] for file in files}
-    else:
-        # Exibir mensagem de erro detalhada
-        raise Exception(f"Erro ao acessar a API do Google Drive: {response.status_code} - {response.text}")
-
 def carregar_dados(file_id):
     url = f"https://drive.google.com/uc?id={file_id}"
     st.write("Iniciando o carregamento do arquivo...")
@@ -31,11 +18,14 @@ def carregar_dados(file_id):
 
         # Acessar a primeira aba (ou a aba desejada)
         sheet = workbook.active
+        st.write("Aba acessada com sucesso.")
 
         # Desocultar colunas
         for col in sheet.columns:
             if col[0].column_letter in sheet.column_dimensions:
                 sheet.column_dimensions[col[0].column_letter].hidden = False  # Desoculta a coluna
+
+        st.write("Colunas desocultadas com sucesso.")
 
         # Salvar as alterações em um novo arquivo
         temp_file = io.BytesIO()
@@ -48,6 +38,7 @@ def carregar_dados(file_id):
         st.write("Dados carregados com sucesso.")
         return df
     else:
+        st.error(f"Erro ao acessar o arquivo no Google Drive: {response.status_code}")
         raise Exception("Erro ao acessar o arquivo no Google Drive.")
 
 def aplicar_modelos(df):
