@@ -15,11 +15,6 @@ sys.path = [p for p in sys.path if p != 'modules']
 if modules_path not in sys.path:
     sys.path.insert(0, modules_path)
 
-# Verificar a estrutura de diretórios
-print("Diretório atual:", os.getcwd())
-print("Caminho para módulos:", modules_path)
-print("Arquivos em modules:", os.listdir(modules_path) if os.path.exists(modules_path) else "Diretório não existe")
-
 # Importar módulos
 try:
     from auth import autenticar_usuario
@@ -38,13 +33,14 @@ if not usuario:
     st.stop()
 
 # Carregar dados
-try:
-    df_original = carregar_dados()
-    df = aplicar_modelos(df_original)
-    df = calcular_indice_confiança(df)
-except Exception as e:
-    st.error(f"Erro ao carregar dados: {e}")
+resultado = carregar_dados()
+if isinstance(resultado, str):  # Se for uma string, é uma mensagem de erro
+    st.error(resultado)
     st.stop()
+else:
+    df = resultado
+    df = aplicar_modelos(df)
+    df = calcular_indice_confiança(df)
 
 # Interface principal
 pagina = st.sidebar.radio("Escolha a página:", ["Dashboard de Jogos", "Gráficos e Análises"])
