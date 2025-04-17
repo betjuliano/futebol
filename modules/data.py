@@ -1,10 +1,16 @@
 import pandas as pd
 
 def carregar_dados():
-    # Carregar dados do Google Sheets ou outra fonte
     url = "https://docs.google.com/spreadsheets/d/1bnyG54WZ_ggkvekqwIicZGFdR-KXCffWEcXcQ4v0KcI/export?format=xlsx"
     df = pd.read_excel(url, sheet_name="Jogos")
     df.fillna(0, inplace=True)
+
+    # Converter colunas relevantes para numérico
+    colunas_numericas = ['XG CASA', 'XG VISITANTE', 'ODD1', 'ODD2', 'ODD3', '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT']
+    for col in colunas_numericas:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce')  # Converte para numérico, substitui erros por NaN
+
     return df
 
 def aplicar_modelos(df):
