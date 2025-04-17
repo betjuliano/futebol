@@ -7,15 +7,14 @@ import requests
 placares_btts = ['1x1', '2x1', '1x2', '2x2', '3x1', '1x3', '3x2', '2x3', '3x3']
 placares_comparacao = ['0x0', '1x0', '0x1', '2x0', '0x2', '1X1', '2x1', '1x2', '3x0', '0x3', '2x2', '3x1', '1x3', '3x2', '2x3', '4x0', '0x4', '4x1', '1x4', '4x2', '2x4', '4x3', '3x4']
 
-@st.cache_data
 def carregar_dados():
-    url = "https://1drv.ms/x/c/d69a23eaf43139a6/EZ_8ytVjFFVEjfwNo8Ent7oBYQSKK5XQCz55r6OwNUjGDA?e=L3Aqjh"
+    url = "https://onedrive.live.com/personal/d69a23eaf43139a6/_layouts/15/Doc.aspx?sourcedoc=%7Bd5cafc9f-1463-4455-8dfc-0da3c127b7ba%7D&action=default&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3gvYy9kNjlhMjNlYWY0MzEzOWE2L0VaXzh5dFZqRkZWRWpmd05vOEVudDdvQllRU0tLNVhRQ3o1NXI2T3dOVWpHREE_ZT1TUWlZaWY&slrid=675f95a1-c0a9-8000-99bb-ee97f1038839&originalPath=aHR0cHM6Ly8xZHJ2Lm1zL3gvYy9kNjlhMjNlYWY0MzEzOWE2L0VaXzh5dFZqRkZWRWpmd05vOEVudDdvQllRU0tLNVhRQ3o1NXI2T3dOVWpHREE_cnRpbWU9WEN0VTdxMTkzVWc&CID=0890df7c-6d4d-45f7-810c-45ce0f55e632&_SRM=0:G:40"
 
     try:
         response = requests.get(url)
         response.raise_for_status()  # Garante que não houve erro de conexão
         arquivo_excel = io.BytesIO(response.content)
-        df = pd.read_excel(arquivo_excel, sheet_name="Jogos")
+        df = pd.read_excel(arquivo_excel, sheet_name="Jogos", engine='openpyxl')  # Especificando o engine
         df.fillna(0, inplace=True)
         return df
     except Exception as e:
