@@ -38,7 +38,7 @@ if not usuario:
 
 # Carregar dados
 try:
-    df_original = carregar_dados("JogosDia.xlsx")
+    df_original = carregar_dados()
     df = aplicar_modelos(df_original)
     df = calcular_indice_confiança(df)
 except Exception as e:
