@@ -1,6 +1,10 @@
 import pandas as pd
 import requests
 import io
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Alignment
+from openpyxl.styles import Font, PatternFill
 
 def listar_arquivos_drive(folder_id):
     # URL da API do Google Drive para listar arquivos
