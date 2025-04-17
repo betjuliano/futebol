@@ -1,4 +1,5 @@
 import pandas as pd
+import requests
 
 def listar_arquivos_drive(folder_id):
     # URL da API do Google Drive para listar arquivos
