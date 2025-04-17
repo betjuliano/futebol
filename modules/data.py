@@ -1,5 +1,32 @@
 import pandas as pd
 import requests
+import io
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font, PatternFill
+from openpyxl.drawing.image import Image
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.worksheet.hyperlink import Hyperlink
+from openpyxl.worksheet import Worksheet
+from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.drawing.image import Image
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.styles import Font, PatternFill
+from openpyxl.utils import get_column_letter
+from openpyxl.drawing.image import Image
+from openpyxl.styles import Alignment
+from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.worksheet.hyperlink import Hyperlink
+from openpyxl.worksheet import Worksheet
+from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.drawing.image import Image
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.styles import Font, PatternFill
+from openpyxl.utils import get_column_letter
+from openpyxl.drawing.image import Image
+from openpyxl.styles import Alignment       
 
 def listar_arquivos_drive(folder_id):
     # URL da API do Google Drive para listar arquivos
