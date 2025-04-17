@@ -2,10 +2,7 @@ import pandas as pd
 import requests
 import io
 from openpyxl import load_workbook
-from openpyxl.utils import get_column_letter
-from openpyxl.styles import Alignment
-from openpyxl.styles import Font, PatternFill
-import streamlit as st
+import streamlit as st  # Certifique-se de que esta linha está presente
 
 def listar_arquivos_drive(folder_id):
     # URL da API do Google Drive para listar arquivos
@@ -35,10 +32,10 @@ def carregar_dados(file_id):
         # Acessar a primeira aba (ou a aba desejada)
         sheet = workbook.active
 
-        # Desocultar colunas, se necessário (comente esta parte para testar)
-        for column in sheet.columns:
-            if column[0].hidden:  # Verifica se a coluna está oculta
-                column[0].hidden = False  # Desoculta a coluna
+        # Desocultar colunas
+        for col in sheet.columns:
+            if col[0].column_letter in sheet.column_dimensions:
+                sheet.column_dimensions[col[0].column_letter].hidden = False  # Desoculta a coluna
 
         # Salvar as alterações em um novo arquivo
         temp_file = io.BytesIO()
