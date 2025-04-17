@@ -1,6 +1,8 @@
 # modules/data.py
 import streamlit as st
 import pandas as pd
+import io
+import requests
 
 placares_btts = ['1x1', '2x1', '1x2', '2x2', '3x1', '1x3', '3x2', '2x3', '3x3']
 placares_comparacao = ['0x0', '1x0', '0x1', '2x0', '0x2', '1X1', '2x1', '1x2', '3x0', '0x3', '2x2', '3x1', '1x3', '3x2', '2x3', '4x0', '0x4', '4x1', '1x4', '4x2', '2x4', '4x3', '3x4']
