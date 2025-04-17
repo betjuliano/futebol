@@ -1,7 +1,6 @@
 import pandas as pd
 
 def listar_arquivos_drive(folder_id):
-    # URL da API do Google Drive para listar arquivos
     url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}' in parents&key=AIzaSyBecRkdr96mcgfi5e34AyBCThT_Nnec5Wk"
     response = requests.get(url)
     if response.status_code == 200:
@@ -12,9 +11,33 @@ def listar_arquivos_drive(folder_id):
 
 def carregar_dados(file_id):
     url = f"https://drive.google.com/uc?id={file_id}"
-    df = pd.read_excel(url)
-    df.fillna(0, inplace=True)
-    return df
+
+    # Carregar o arquivo Excel usando openpyxl
+    response = requests.get(url)
+    if response.status_code == 200:
+        # Usar io.BytesIO para ler o conteúdo do arquivo
+        excel_file = io.BytesIO(response.content)
+        workbook = load_workbook(filename=excel_file, data_only=True)
+
+        # Acessar a primeira aba (ou a aba desejada)
+        sheet = workbook.active
+
+        # Desocultar colunas
+        for column in sheet.columns:
+            if column[0].hidden:  # Verifica se a coluna está oculta
+                column[0].hidden = False  # Desoculta a coluna
+
+        # Salvar as alterações em um novo arquivo
+        temp_file = io.BytesIO()
+        workbook.save(temp_file)
+        temp_file.seek(0)  # Voltar ao início do arquivo
+
+        # Carregar o DataFrame com Pandas
+        df = pd.read_excel(temp_file)
+        df.fillna(0, inplace=True)
+        return df
+    else:
+        raise Exception("Erro ao acessar o arquivo no Google Drive.")
 
 
 def aplicar_modelos(df):
