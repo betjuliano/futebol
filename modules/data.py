@@ -5,11 +5,22 @@ def carregar_dados():
     df = pd.read_excel(url, sheet_name="Jogos")
     df.fillna(0, inplace=True)
 
+    # Exibir as primeiras linhas e tipos de dados
+    st.write("Primeiras linhas do DataFrame:", df.head())
+    st.write("Tipos de dados das colunas:", df.dtypes)
+
     # Converter colunas relevantes para numérico
     colunas_numericas = ['XG CASA', 'XG VISITANTE', 'ODD1', 'ODD2', 'ODD3', '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT']
     for col in colunas_numericas:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce')  # Converte para numérico, substitui erros por NaN
+
+            # Verificar se há valores NaN após a conversão
+            if df[col].isnull().any():
+                st.warning(f"A coluna '{col}' contém valores não numéricos. Valores convertidos para NaN.")
+
+    # Opcional: Remover linhas com NaN nas colunas numéricas
+    df.dropna(subset=colunas_numericas, inplace=True)
 
     return df
 
