@@ -21,10 +21,12 @@ def listar_arquivos_drive(folder_id):
 
 def carregar_dados(file_id):
     url = f"https://drive.google.com/uc?id={file_id}"
+    st.write("Iniciando o carregamento do arquivo...")
 
-    # Carregar o arquivo Excel usando openpyxl
     response = requests.get(url)
     if response.status_code == 200:
+        st.write("Arquivo baixado com sucesso. Processando...")
+
         # Usar io.BytesIO para ler o conteúdo do arquivo
         excel_file = io.BytesIO(response.content)
         workbook = load_workbook(filename=excel_file, data_only=True)
@@ -32,7 +34,7 @@ def carregar_dados(file_id):
         # Acessar a primeira aba (ou a aba desejada)
         sheet = workbook.active
 
-        # Desocultar colunas
+        # Desocultar colunas, se necessário (comente esta parte para testar)
         for column in sheet.columns:
             if column[0].hidden:  # Verifica se a coluna está oculta
                 column[0].hidden = False  # Desoculta a coluna
@@ -45,6 +47,7 @@ def carregar_dados(file_id):
         # Carregar o DataFrame com Pandas
         df = pd.read_excel(temp_file)
         df.fillna(0, inplace=True)
+        st.write("Dados carregados com sucesso.")
         return df
     else:
         raise Exception("Erro ao acessar o arquivo no Google Drive.")
