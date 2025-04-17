@@ -1,7 +1,9 @@
 import streamlit as st
 import sys
 import os
+from auth import autenticar_usuario
 from data import listar_arquivos_drive, carregar_dados
+from pages import pagina_dashboard, pagina_graficos
 
 # Configurações iniciais
 os.environ['GIT_TERMINAL_PROMPT'] = '0'
@@ -17,9 +19,9 @@ if modules_path not in sys.path:
 st.set_page_config(page_title="Dashboard Futebol PRO", layout="wide")
 
 # Autenticação
-usuario = autenticar_usuario()
-if not usuario:
-    st.stop()
+email = autenticar_usuario()
+if email is None:
+    st.stop()  # Para a execução se o usuário não estiver autenticado
 
 # Listar arquivos na pasta do Google Drive
 folder_id = '1wj4HZ35KQrSRIlCBQxRPlRtbeu2FCi2V'  # ID da pasta
