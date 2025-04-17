@@ -25,7 +25,11 @@ if email is None:
 
 # Listar arquivos na pasta do Google Drive
 folder_id = '1wj4HZ35KQrSRIlCBQxRPlRtbeu2FCi2V'  # ID da pasta
-arquivos = listar_arquivos_drive(folder_id)
+try:
+    arquivos = listar_arquivos_drive(folder_id)
+except Exception as e:
+    st.error(f"Erro ao listar arquivos: {e}")
+    st.stop()
 
 # Selecionar a data
 data_selecionada = st.selectbox("Selecione a data:", list(arquivos.keys()))

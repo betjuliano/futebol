@@ -1,13 +1,17 @@
 import pandas as pd
 
 def listar_arquivos_drive(folder_id):
+    # URL da API do Google Drive para listar arquivos
     url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}' in parents&key=AIzaSyBecRkdr96mcgfi5e34AyBCThT_Nnec5Wk"
     response = requests.get(url)
+
+    # Verificar a resposta da API
     if response.status_code == 200:
         files = response.json().get('files', [])
         return {file['name']: file['id'] for file in files}
     else:
-        return {}
+        # Exibir mensagem de erro detalhada
+        raise Exception(f"Erro ao acessar a API do Google Drive: {response.status_code} - {response.text}")
 
 def carregar_dados(file_id):
     url = f"https://drive.google.com/uc?id={file_id}"
@@ -38,7 +42,6 @@ def carregar_dados(file_id):
         return df
     else:
         raise Exception("Erro ao acessar o arquivo no Google Drive.")
-
 
 def aplicar_modelos(df):
     def classificar_modelo(row):
