@@ -1,31 +1,21 @@
 import pandas as pd
 
-def carregar_dados():
-    url = "https://docs.google.com/spreadsheets/d/1bnyG54WZ_ggkvekqwIicZGFdR-KXCffWEcXcQ4v0KcI/export?format=xlsx"
-    try:
-        df = pd.read_excel(url, sheet_name="Jogos")
-        df.fillna(0, inplace=True)
+def listar_arquivos_drive(folder_id):
+    # URL da API do Google Drive para listar arquivos
+    url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}' in parents&key=AIzaSyBecRkdr96mcgfi5e34AyBCThT_Nnec5Wk"
+    response = requests.get(url)
+    if response.status_code == 200:
+        files = response.json().get('files', [])
+        return {file['name']: file['id'] for file in files}
+    else:
+        return {}
 
-        # Exibir as primeiras linhas e tipos de dados
-        print("Primeiras linhas do DataFrame:", df.head())
-        print("Tipos de dados das colunas:", df.dtypes)
+def carregar_dados(file_id):
+    url = f"https://drive.google.com/uc?id={file_id}"
+    df = pd.read_excel(url)
+    df.fillna(0, inplace=True)
+    return df
 
-        # Converter colunas relevantes para numérico
-        colunas_numericas = ['XG CASA', 'XG VISITANTE', 'ODD1', 'ODD2', 'ODD3', '%PARTIDAS GOLS CASA HT', '%PARTIDAS GOLS VISIT HT']
-        for col in colunas_numericas:
-            if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce')  # Converte para numérico, substitui erros por NaN
-
-                # Verificar se há valores NaN após a conversão
-                if df[col].isnull().any():
-                    return f"A coluna '{col}' contém valores não numéricos. Valores convertidos para NaN."
-
-        # Opcional: Remover linhas com NaN nas colunas numéricas
-        df.dropna(subset=colunas_numericas, inplace=True)
-
-        return df
-    except Exception as e:
-        return f"Erro ao carregar dados: {e}"
 
 def aplicar_modelos(df):
     def classificar_modelo(row):
