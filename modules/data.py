@@ -6,10 +6,17 @@ placares_btts = ['1x1', '2x1', '1x2', '2x2', '3x1', '1x3', '3x2', '2x3', '3x3']
 placares_comparacao = ['0x0', '1x0', '0x1', '2x0', '0x2', '1X1', '2x1', '1x2', '3x0', '0x3', '2x2', '3x1', '1x3', '3x2', '2x3', '4x0', '0x4', '4x1', '1x4', '4x2', '2x4', '4x3', '3x4']
 
 @st.cache_data
-def carregar_dados(filename="JogosDia.xlsx"):
-    df = pd.read_excel(filename, sheet_name="Jogos")
-    df.fillna(0, inplace=True)
-    return df
+def carregar_dados():
+    # Link convertido para formato de download direto
+    url = "https://onedrive.live.com/download?resid=d69a23eaf43139a6!107&authkey=!AKXe9Vyz_6XhW_c"
+    
+    try:
+        df = pd.read_excel(url)
+        df.fillna(0, inplace=True)
+        return df
+    except Exception as e:
+        st.error(f"Erro ao carregar dados: {str(e)}")
+        return pd.DataFrame()
 
 def aplicar_modelos(df):
     def classificar_modelo(row):
