@@ -3,7 +3,7 @@ import requests
 
 def listar_arquivos_drive(folder_id):
     # URL da API do Google Drive para listar arquivos
-    url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}' in parents&key=AIzaSyBecRkdr96mcgfi5e34AyBCThT_Nnec5Wk"
+    url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}' in parents&key=AIzaSyBowt-JKmhwHOT7fUBi9ILKh_XR6_xKUCw"
     response = requests.get(url)
 
     # Verificar a resposta da API
